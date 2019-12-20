@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JNationalBankApplication.Interfaces;
+using JNationalBankApplication.Services;
 
 namespace JNationalBankApplication
 {
@@ -10,6 +7,12 @@ namespace JNationalBankApplication
     {
         static void Main(string[] args)
         {
+            ApplicationStart(new MenuService(new CustomerService()));
+        }
+
+        static void ApplicationStart(IMenuService _menuService)
+        {
+            _menuService.DisplayApplicationMenu();
         }
     }
 }
