@@ -6,10 +6,12 @@ namespace JNationalBankApplication.Services
     public class MenuService : IMenuService
     {
         private readonly ICustomerService _customerService;
+        private readonly IAccountService _accountService;
 
-        public MenuService(ICustomerService customerService)
+        public MenuService(ICustomerService customerService, IAccountService accountService)
         {
             _customerService = customerService;
+            _accountService = accountService;
         }
 
         public void DisplayApplicationMenu()
@@ -46,7 +48,11 @@ namespace JNationalBankApplication.Services
                         case 2:
                             _customerService.ViewCustomersAccounts();
                             break;
+                        case 3:
+                            _accountService.DepositBalance();
+                            break;
                         case 4:
+                            _accountService.WithdrawBalance();
                             break;
                         case 5:
                             break;

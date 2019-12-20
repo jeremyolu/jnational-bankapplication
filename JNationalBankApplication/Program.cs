@@ -7,7 +7,7 @@ namespace JNationalBankApplication
     {
         static void Main(string[] args)
         {
-            ApplicationStart(new MenuService(new CustomerService()));
+            ApplicationStart(new MenuService(new CustomerService(), new AccountService()));
         }
 
         static void ApplicationStart(IMenuService _menuService)

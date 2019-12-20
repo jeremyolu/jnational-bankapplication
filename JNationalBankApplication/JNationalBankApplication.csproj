@@ -76,7 +76,9 @@
     <Compile Include="Customer.cs">
       <DependentUpon>BankModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IAccountService.cs" />
     <Compile Include="Repositories\CustomerRepository.cs" />
+    <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\CustomerService.cs" />
     <Compile Include="Interfaces\ICustomerService.cs" />
     <Compile Include="Interfaces\IMenuService.cs" />
