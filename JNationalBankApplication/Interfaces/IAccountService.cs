@@ -5,5 +5,7 @@
         void DepositBalance();
 
         void WithdrawBalance();
+
+        void SendCustomerPayment();
     }
 }

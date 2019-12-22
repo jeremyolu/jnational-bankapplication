@@ -83,6 +83,56 @@ namespace JNationalBankApplication.Services
             }
         }
 
+        public void SendCustomerPayment()
+        {
+            Console.Clear();
+            Console.WriteLine("JNATIONAL CUSTOMER PAYMEMT BALANCE");
+
+            Console.WriteLine("ENTER CUSTOMER ACC NO: ");
+            int accNo = Convert.ToInt32(Console.ReadLine());
+            
+            Console.WriteLine("ENTER PAYEE ACC NO: ");
+            int paymentAccNo = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("ENTER PAYMENT AMOUNT: ");
+            decimal paymentAmount = Convert.ToDecimal(Console.ReadLine());
+
+            var customerAcc = _context.Accounts.Where(c => c.AccountNo == accNo).FirstOrDefault();
+            var payeeAcc = _context.Accounts.Where(c => c.AccountNo == paymentAccNo).FirstOrDefault();
+
+            decimal customerBalance = customerAcc.Balance;
+            decimal payeeBalance = payeeAcc.Balance;
+
+            //implement function to add and remove funds from account
+            if (customerBalance < paymentAmount)
+            {
+                Console.WriteLine("cannot send this amount because customer account balance has insufficient funds");
+                throw new ArgumentOutOfRangeException();
+            }
+
+            decimal updatedCustomerBalance = customerBalance -= paymentAmount;
+            decimal updatedPayeeBalance = payeeBalance += paymentAmount;
+
+            try
+            {
+                customerAcc.Balance = updatedCustomerBalance;
+                payeeAcc.Balance = updatedPayeeBalance;
+                _context.SaveChanges();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"{paymentAmount.ToString("C")} successfully sent to acc no: {paymentAccNo}");
+                Console.WriteLine();
+                Console.WriteLine($"CUSTOMER BALANCE: {updatedCustomerBalance.ToString("C")}");
+                Console.WriteLine();
+                Console.WriteLine($"PAYEE BALANCE: {updatedPayeeBalance.ToString("C")}");
+                Console.ResetColor();
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+        }
+
         //implement unit test for this method
         public decimal DepositAmount(decimal balance, decimal amount)
         {
@@ -120,6 +170,11 @@ namespace JNationalBankApplication.Services
             }
 
             return balance - withdrawAmount;
+        }
+
+        public decimal CheckAccountBalancePayment(decimal customerBalance, decimal paymentAmount)
+        {
+            throw new NotImplementedException();
         }
     }
 }
