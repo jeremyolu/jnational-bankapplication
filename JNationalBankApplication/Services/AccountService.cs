@@ -176,6 +176,7 @@ namespace JNationalBankApplication.Services
             return customerBalance -= paymentAmount;
         }
 
+        //implement unit test for this method
         public decimal CheckUpdatePayeeBalance(decimal payeeBalance, decimal paymentAmount)
         {
             return payeeBalance += paymentAmount;

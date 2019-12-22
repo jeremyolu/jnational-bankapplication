@@ -61,7 +61,7 @@ namespace JNationalBankApplication.Services
                 catch (DbEntityValidationException e)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ERROR REGISTERING CUSTOMER ACCOUNT ");
+                    Console.WriteLine("ERROR REGISTERING CUSTOMER ACCOUNT");
                     foreach (var eve in e.EntityValidationErrors)
                     {
                         Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
