@@ -51,11 +51,6 @@ namespace JNationalBankApplication.Services
             Console.WriteLine("ENTER CUSTOMER ACC NO: ");
             int accNo = Convert.ToInt32(Console.ReadLine());
 
-            /*
-            Console.WriteLine("ENTER PAYEE ACC NO: ");
-            int paymentAccNo = Convert.ToInt32(Console.ReadLine());
-            */
-
             Console.WriteLine("ENTER WITHDRAWN AMOUNT: ");
             decimal withdrawAmount = Convert.ToDecimal(Console.ReadLine());
 
@@ -86,16 +81,20 @@ namespace JNationalBankApplication.Services
         public void SendCustomerPayment()
         {
             Console.Clear();
-            Console.WriteLine("JNATIONAL CUSTOMER PAYMEMT BALANCE");
+            Console.WriteLine("JNATIONAL CUSTOMER PAYMEMT");
+            Console.WriteLine();
 
             Console.WriteLine("ENTER CUSTOMER ACC NO: ");
             int accNo = Convert.ToInt32(Console.ReadLine());
-            
+            Console.WriteLine();
+
             Console.WriteLine("ENTER PAYEE ACC NO: ");
             int paymentAccNo = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine();
 
             Console.WriteLine("ENTER PAYMENT AMOUNT: ");
             decimal paymentAmount = Convert.ToDecimal(Console.ReadLine());
+            Console.WriteLine();
 
             var customerAcc = _context.Accounts.Where(c => c.AccountNo == accNo).FirstOrDefault();
             var payeeAcc = _context.Accounts.Where(c => c.AccountNo == paymentAccNo).FirstOrDefault();
@@ -103,15 +102,8 @@ namespace JNationalBankApplication.Services
             decimal customerBalance = customerAcc.Balance;
             decimal payeeBalance = payeeAcc.Balance;
 
-            //implement function to add and remove funds from account
-            if (customerBalance < paymentAmount)
-            {
-                Console.WriteLine("cannot send this amount because customer account balance has insufficient funds");
-                throw new ArgumentOutOfRangeException();
-            }
-
-            decimal updatedCustomerBalance = customerBalance -= paymentAmount;
-            decimal updatedPayeeBalance = payeeBalance += paymentAmount;
+            decimal updatedCustomerBalance = CheckUpdateCustomerBalance(customerBalance, paymentAmount);
+            decimal updatedPayeeBalance = CheckUpdatePayeeBalance(payeeBalance, paymentAmount);
 
             try
             {
@@ -119,6 +111,7 @@ namespace JNationalBankApplication.Services
                 payeeAcc.Balance = updatedPayeeBalance;
                 _context.SaveChanges();
                 Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine();
                 Console.WriteLine($"{paymentAmount.ToString("C")} successfully sent to acc no: {paymentAccNo}");
                 Console.WriteLine();
                 Console.WriteLine($"CUSTOMER BALANCE: {updatedCustomerBalance.ToString("C")}");
@@ -152,7 +145,6 @@ namespace JNationalBankApplication.Services
             return balance + amount;
         }
         
-
         //implement unit test for this method
         public decimal WithdrawAmount(decimal balance, decimal withdrawAmount)
         {
@@ -172,9 +164,21 @@ namespace JNationalBankApplication.Services
             return balance - withdrawAmount;
         }
 
-        public decimal CheckAccountBalancePayment(decimal customerBalance, decimal paymentAmount)
+        //implement unit test for this method
+        public decimal CheckUpdateCustomerBalance(decimal customerBalance, decimal paymentAmount)
         {
-            throw new NotImplementedException();
+            if (customerBalance < paymentAmount)
+            {
+                Console.WriteLine("cannot send this amount because customer account balance has insufficient funds");
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return customerBalance -= paymentAmount;
+        }
+
+        public decimal CheckUpdatePayeeBalance(decimal payeeBalance, decimal paymentAmount)
+        {
+            return payeeBalance += paymentAmount;
         }
     }
 }
