@@ -7,11 +7,13 @@ namespace JNationalBankApplication.Services
     {
         private readonly ICustomerService _customerService;
         private readonly IAccountService _accountService;
+        private readonly ILoanService _loanService;
 
-        public MenuService(ICustomerService customerService, IAccountService accountService)
+        public MenuService(ICustomerService customerService, IAccountService accountService, ILoanService loanService)
         {
             _customerService = customerService;
             _accountService = accountService;
+            _loanService = loanService;
         }
 
         public void DisplayApplicationMenu()
@@ -57,6 +59,9 @@ namespace JNationalBankApplication.Services
                             break;
                         case 5:
                             _accountService.SendCustomerPayment();
+                            break;
+                        case 6:
+                            _loanService.ApplyCustomerLoan();
                             break;
                         default:
                             break;

@@ -77,11 +77,16 @@
       <DependentUpon>BankModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IAccountService.cs" />
+    <Compile Include="Interfaces\ILoanService.cs" />
+    <Compile Include="Loan.cs">
+      <DependentUpon>BankModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Repositories\CustomerRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\CustomerService.cs" />
     <Compile Include="Interfaces\ICustomerService.cs" />
     <Compile Include="Interfaces\IMenuService.cs" />
+    <Compile Include="Services\LoanService.cs" />
     <Compile Include="Services\MenuService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -18,6 +18,7 @@ namespace JNationalBankApplication
         public Account()
         {
             this.Customers = new HashSet<Customer>();
+            this.Loans = new HashSet<Loan>();
         }
     
         public int AccountNo { get; set; }
@@ -26,5 +27,7 @@ namespace JNationalBankApplication
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Customer> Customers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Loan> Loans { get; set; }
     }
 }

@@ -5,9 +5,11 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="76e0fd1e74854a619cb216306b49bb10" Name="Diagram1">
-        <EntityTypeShape EntityType="JNationalBankDBModel.Customer" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="JNationalBankDBModel.Account" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="JNationalBankDBModel.Customer" Width="1.5" PointX="0.5" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="JNationalBankDBModel.Account" Width="1.5" PointX="3.375" PointY="2.25" />
         <AssociationConnector Association="JNationalBankDBModel.FK_Customers_Accounts" />
+        <EntityTypeShape EntityType="JNationalBankDBModel.Loan" Width="1.5" PointX="6.25" PointY="1.125" />
+        <AssociationConnector Association="JNationalBankDBModel.FK_Loans_Accounts" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
