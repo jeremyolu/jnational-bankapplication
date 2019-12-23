@@ -73,7 +73,6 @@ namespace JNationalBankApplication.Services
         //implement unit test for this method
         public DateTime CalculateDate(DateTime loanStartDate, decimal loanAmount)
         {
-            
             if(loanAmount >= 500 && loanAmount < 1000)
             {
                 return loanStartDate.AddMonths(9); ; 

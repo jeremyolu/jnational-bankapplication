@@ -20,6 +20,7 @@ namespace JNationalBankApplication
         public decimal LoanInterest { get; set; }
         public System.DateTime RepaymentDate { get; set; }
         public System.DateTime LoanStartDate { get; set; }
+        public decimal LoanRepayment { get; set; }
     
         public virtual Account Account { get; set; }
     }
