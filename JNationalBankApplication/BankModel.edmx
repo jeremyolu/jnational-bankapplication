@@ -29,9 +29,10 @@
             <PropertyRef Name="LoanNo" />
           </Key>
           <Property Name="LoanNo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="LoanAmount" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+          <Property Name="LoanAmount" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="LoanInterest" Type="decimal" Precision="5" Scale="2" Nullable="false" />
-          <Property Name="LoanRepayment" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+          <Property Name="LoanInterestRepayment" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="FullRepaymentAmount" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="LoanStartDate" Type="datetime" Nullable="false" />
           <Property Name="RepaymentDate" Type="datetime" Nullable="false" />
           <Property Name="AccNo" Type="int" Nullable="false" />
@@ -129,13 +130,14 @@
             <PropertyRef Name="LoanNo" />
           </Key>
           <Property Name="LoanNo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="LoanAmount" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+          <Property Name="LoanAmount" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
           <Property Name="AccNo" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Account" Relationship="JNationalBankDBModel.FK_Loans_Accounts" FromRole="Loan" ToRole="Account" />
+          <Property Name="RepaymentDate" Type="DateTime" Precision="3" Nullable="false" />
+          <Property Name="LoanStartDate" Type="DateTime" Precision="3" Nullable="false" />
           <Property Name="LoanInterest" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
-          <Property Name="RepaymentDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LoanStartDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LoanRepayment" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+          <Property Name="LoanInterestRepayment" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="FullRepaymentAmount" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
         </EntityType>
         <Association Name="FK_Loans_Accounts">
           <End Type="JNationalBankDBModel.Account" Role="Account" Multiplicity="1" />
@@ -179,10 +181,11 @@
           <EntitySetMapping Name="Loans">
             <EntityTypeMapping TypeName="JNationalBankDBModel.Loan">
               <MappingFragment StoreEntitySet="Loans">
-                <ScalarProperty Name="LoanRepayment" ColumnName="LoanRepayment" />
+                <ScalarProperty Name="FullRepaymentAmount" ColumnName="FullRepaymentAmount" />
+                <ScalarProperty Name="LoanInterestRepayment" ColumnName="LoanInterestRepayment" />
+                <ScalarProperty Name="LoanInterest" ColumnName="LoanInterest" />
                 <ScalarProperty Name="LoanStartDate" ColumnName="LoanStartDate" />
                 <ScalarProperty Name="RepaymentDate" ColumnName="RepaymentDate" />
-                <ScalarProperty Name="LoanInterest" ColumnName="LoanInterest" />
                 <ScalarProperty Name="AccNo" ColumnName="AccNo" />
                 <ScalarProperty Name="LoanAmount" ColumnName="LoanAmount" />
                 <ScalarProperty Name="LoanNo" ColumnName="LoanNo" />

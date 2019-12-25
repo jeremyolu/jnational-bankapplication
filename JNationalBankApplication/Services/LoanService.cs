@@ -1,5 +1,6 @@
 ﻿using JNationalBankApplication.Interfaces;
 using System;
+using System.Data.Entity.Validation;
 using System.Linq;
 
 namespace JNationalBankApplication.Services
@@ -14,6 +15,8 @@ namespace JNationalBankApplication.Services
         private const decimal band1Rate = 12.6M;
         private const decimal band2Rate = 6.2M;
         private const decimal band3Rate = 3.4M;
+
+        private const decimal LoanAdminRate = 75;
 
         public void ApplyCustomerLoan()
         {
@@ -37,21 +40,66 @@ namespace JNationalBankApplication.Services
 
             //implement unit test for this method
             //implement customer loan validation method - bool type?
+
+            if (CustomerLoanApplication(customerAge, customerAccountBalance))
+            {
+                Console.WriteLine("ENTER CUSTOMER LOAN AMOUNT: ");
+                decimal loanAmount = Convert.ToDecimal(Console.ReadLine());
+
+                try
+                {
+                    loan.AccNo = accNo;
+                    loan.LoanAmount = loanAmount;
+                    loan.LoanStartDate = now;
+                    loan.LoanInterest = SetInterestLoanRate(customerAge);
+                    loan.RepaymentDate = CalculateRepaymentDate(now, loanAmount);
+                    loan.LoanInterestRepayment = CalculateInterestRepaymentAmount(SetInterestLoanRate(customerAge), loanAmount);
+                    loan.FullRepaymentAmount = loan.LoanAmount + loan.LoanInterestRepayment;
+
+                    _context.Loans.Add(loan);
+                    _context.SaveChanges();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine();
+                    Console.WriteLine("CUSTOMER LOAN ACCEPTED AND LOAN ACCOUNT CREATED");
+                    Console.ResetColor();
+                }
+                catch (DbEntityValidationException e)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ERROR REGISTERING CUSTOMER ACCOUNT");
+                    foreach (var eve in e.EntityValidationErrors)
+                    {
+                        Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                        foreach (var ve in eve.ValidationErrors)
+                        {
+                            Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
+                        }
+                    }
+                    Console.ResetColor();
+                    throw;
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("CUSTOMER DOES NOT QUALIFY FOR LOAN");
+                Console.WriteLine();
+                Console.WriteLine($"CUSTOMER IS NOT THE REQUIRED AGE: {minimumCustomerAge} OR CUSTOMER ACCOUNT BALANCE IS LESS THAN THE REQUIRED AMOUNT: {minimumAccountBalance}");
+                Console.WriteLine();
+                Console.WriteLine($"CUSTOMER ACC: {accNo} | CUSTOMER AGE: {customerAge} | CUSTOMER ACCOUNT BALANCE: {customerAccountBalance}");
+                Console.ResetColor();
+            }
+        }
+
+        public bool CustomerLoanApplication(int customerAge, decimal customerAccountBalance)
+        {
             if (customerAge < minimumCustomerAge || customerAccountBalance < minimumAccountBalance)
             {
-                throw new ArgumentOutOfRangeException();
+                return false;
             }
 
-            Console.WriteLine("ENTER CUSTOMER LOAN AMOUNT: ");
-            decimal loanAmount = Convert.ToInt32(Console.ReadLine());
-
-            // if bool true
-            loan.AccNo = accNo;
-            loan.LoanAmount = loanAmount;
-            loan.LoanStartDate = now;
-            
-            loan.LoanInterest = SetInterestLoanRate(customerAge);
-
+            return true;
         }
 
         //implement unit test for this method
@@ -71,7 +119,7 @@ namespace JNationalBankApplication.Services
         }
 
         //implement unit test for this method
-        public DateTime CalculateDate(DateTime loanStartDate, decimal loanAmount)
+        public DateTime CalculateRepaymentDate(DateTime loanStartDate, decimal loanAmount)
         {
             if(loanAmount >= 500 && loanAmount < 1000)
             {
@@ -89,5 +137,10 @@ namespace JNationalBankApplication.Services
             return loanStartDate.AddMonths(32);
         }
 
+        //implement unit test for this method
+        public decimal CalculateInterestRepaymentAmount(decimal interestLoan, decimal loanAmount)
+        {
+            return (interestLoan * loanAmount) / 100 + LoanAdminRate;
+        }
     }
 }

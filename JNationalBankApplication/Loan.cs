@@ -17,10 +17,11 @@ namespace JNationalBankApplication
         public int LoanNo { get; set; }
         public decimal LoanAmount { get; set; }
         public int AccNo { get; set; }
-        public decimal LoanInterest { get; set; }
         public System.DateTime RepaymentDate { get; set; }
         public System.DateTime LoanStartDate { get; set; }
-        public decimal LoanRepayment { get; set; }
+        public decimal LoanInterest { get; set; }
+        public decimal LoanInterestRepayment { get; set; }
+        public decimal FullRepaymentAmount { get; set; }
     
         public virtual Account Account { get; set; }
     }
