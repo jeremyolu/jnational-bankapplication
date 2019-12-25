@@ -39,8 +39,6 @@ namespace JNationalBankApplication.Services
             var now = DateTime.Now;
 
             //implement unit test for this method
-            //implement customer loan validation method - bool type?
-
             if (CustomerLoanApplication(customerAge, customerAccountBalance))
             {
                 Console.WriteLine("ENTER CUSTOMER LOAN AMOUNT: ");
@@ -90,6 +88,35 @@ namespace JNationalBankApplication.Services
                 Console.WriteLine($"CUSTOMER ACC: {accNo} | CUSTOMER AGE: {customerAge} | CUSTOMER ACCOUNT BALANCE: {customerAccountBalance}");
                 Console.ResetColor();
             }
+        }
+
+        public void ViewAllCustomerLoans()
+        {
+            Console.Clear();
+            Console.WriteLine("JNATIONAL CUSTOMER LOANS");
+
+            using (JNationalBankDbContext _context = new JNationalBankDbContext())
+            {
+                var loans = _context.Loans.ToList();
+
+                foreach (var loan in loans)
+                {
+                    Console.WriteLine("---------------------------------");
+                    Console.WriteLine($"LOAN ID: {loan.LoanNo}");
+                    Console.WriteLine($"LOAN ACC NO: {loan.AccNo}");
+                    Console.WriteLine($"LOAN AMOUNT: {loan.LoanAmount}");
+                    Console.WriteLine($"LOAN INTEREST: {loan.LoanInterest}");
+                    Console.WriteLine($"INTEREST REPAYMENT: {loan.LoanInterestRepayment}");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"FULL PAYMENT AMOUNT: {loan.FullRepaymentAmount}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine($"LOAN START DATE: {loan.LoanStartDate}");
+                    Console.WriteLine($"LOAN REPAYMENT DATE: {loan.RepaymentDate}");
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("PRESS ENTER TO CONTINUE");
         }
 
         public bool CustomerLoanApplication(int customerAge, decimal customerAccountBalance)

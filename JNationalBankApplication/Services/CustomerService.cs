@@ -9,11 +9,6 @@ namespace JNationalBankApplication.Services
     {
         private const string sortCode = "30-14-68";
 
-        public CustomerService()
-        {
-
-        }
-
         public void RegisterCustomerAccount()
         {
             Console.Clear();

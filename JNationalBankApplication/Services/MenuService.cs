@@ -32,6 +32,7 @@ namespace JNationalBankApplication.Services
                 Console.WriteLine("press 4 to withdraw amount");
                 Console.WriteLine("press 5 to send customer payment");
                 Console.WriteLine("press 6 to apply for customer loan");
+                Console.WriteLine("press 7 to view all customer loans");
                 Console.WriteLine("press 0 to exit");
                 Console.WriteLine("----------------------------------");
                 
@@ -62,6 +63,9 @@ namespace JNationalBankApplication.Services
                             break;
                         case 6:
                             _loanService.ApplyCustomerLoan();
+                            break;
+                        case 7:
+                            _loanService.ViewAllCustomerLoans();
                             break;
                         default:
                             break;
