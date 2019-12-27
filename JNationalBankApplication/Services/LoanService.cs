@@ -119,6 +119,7 @@ namespace JNationalBankApplication.Services
             Console.WriteLine("PRESS ENTER TO CONTINUE");
         }
 
+        //implement unit test for this method
         public bool CustomerLoanApplication(int customerAge, decimal customerAccountBalance)
         {
             if (customerAge < minimumCustomerAge || customerAccountBalance < minimumAccountBalance)
