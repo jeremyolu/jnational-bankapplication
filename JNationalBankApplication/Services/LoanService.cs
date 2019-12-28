@@ -7,7 +7,9 @@ namespace JNationalBankApplication.Services
 {
     public class LoanService : ILoanService
     {
-        JNationalBankDbContext _context = new JNationalBankDbContext();
+        private readonly IDatabaseService _databaseService;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IAccountRepository _accountRepository;
 
         private const decimal minimumCustomerAge = 18;
         private const decimal minimumAccountBalance = 500.00M;
@@ -17,6 +19,13 @@ namespace JNationalBankApplication.Services
         private const decimal band3Rate = 3.4M;
 
         private const decimal LoanAdminRate = 75;
+
+        public LoanService(IDatabaseService databaseService, ICustomerRepository customerRepository, IAccountRepository accountRepository)
+        {
+            _databaseService = databaseService;
+            _customerRepository = customerRepository;
+            _accountRepository = accountRepository;
+        }
 
         public void ApplyCustomerLoan()
         {
@@ -30,8 +39,8 @@ namespace JNationalBankApplication.Services
 
             var loan = new Loan();
 
-            var customer = _context.Customers.Where(c => c.AccountNo == accNo).FirstOrDefault();
-            var customerAcc = _context.Accounts.Where(c => c.AccountNo == accNo).FirstOrDefault();
+            var customer = _customerRepository.ViewCustomerDetails(accNo);
+            var customerAcc = _accountRepository.GetCustomerAccountDetails(accNo);
 
             var customerAge = customer.Age;
             var customerAccountBalance = customerAcc.Balance;
@@ -54,8 +63,8 @@ namespace JNationalBankApplication.Services
                     loan.LoanInterestRepayment = CalculateInterestRepaymentAmount(SetInterestLoanRate(customerAge), loanAmount);
                     loan.FullRepaymentAmount = loan.LoanAmount + loan.LoanInterestRepayment;
 
-                    _context.Loans.Add(loan);
-                    _context.SaveChanges();
+                    _databaseService.Loans.Add(loan);
+                    _databaseService.SaveDatabaseChanges();
 
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine();
@@ -95,24 +104,21 @@ namespace JNationalBankApplication.Services
             Console.Clear();
             Console.WriteLine("JNATIONAL CUSTOMER LOANS");
 
-            using (JNationalBankDbContext _context = new JNationalBankDbContext())
-            {
-                var loans = _context.Loans.ToList();
+            var loans = _databaseService.Loans.ToList();
 
-                foreach (var loan in loans)
-                {
-                    Console.WriteLine("---------------------------------");
-                    Console.WriteLine($"LOAN ID: {loan.LoanNo}");
-                    Console.WriteLine($"LOAN ACC NO: {loan.AccNo}");
-                    Console.WriteLine($"LOAN AMOUNT: {loan.LoanAmount}");
-                    Console.WriteLine($"LOAN INTEREST: {loan.LoanInterest}");
-                    Console.WriteLine($"INTEREST REPAYMENT: {loan.LoanInterestRepayment}");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"FULL PAYMENT AMOUNT: {loan.FullRepaymentAmount}");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine($"LOAN START DATE: {loan.LoanStartDate}");
-                    Console.WriteLine($"LOAN REPAYMENT DATE: {loan.RepaymentDate}");
-                }
+            foreach (var loan in loans)
+            {
+                Console.WriteLine("---------------------------------");
+                Console.WriteLine($"LOAN ID: {loan.LoanNo}");
+                Console.WriteLine($"LOAN ACC NO: {loan.AccNo}");
+                Console.WriteLine($"LOAN AMOUNT: {loan.LoanAmount}");
+                Console.WriteLine($"LOAN INTEREST: {loan.LoanInterest}");
+                Console.WriteLine($"INTEREST REPAYMENT: {loan.LoanInterestRepayment}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"FULL PAYMENT AMOUNT: {loan.FullRepaymentAmount}");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"LOAN START DATE: {loan.LoanStartDate}");
+                Console.WriteLine($"LOAN REPAYMENT DATE: {loan.RepaymentDate}");
             }
 
             Console.WriteLine();
