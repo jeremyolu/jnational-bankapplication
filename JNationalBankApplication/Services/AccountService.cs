@@ -6,7 +6,14 @@ namespace JNationalBankApplication.Services
 {
     public class AccountService : IAccountService
     {
-        JNationalBankDbContext _context = new JNationalBankDbContext();
+        private readonly IDatabaseService _databaseService;
+        private readonly IAccountRepository _accountRepository;
+
+        public AccountService(IDatabaseService databaseService, IAccountRepository accountRepository)
+        {
+            _databaseService = databaseService;
+            _accountRepository = accountRepository;
+        }
 
         public void DepositBalance()
         {
@@ -19,7 +26,7 @@ namespace JNationalBankApplication.Services
             Console.WriteLine("ENTER DEPOSIT AMOUNT: ");
             decimal amount = Convert.ToDecimal(Console.ReadLine());
 
-            var account = _context.Accounts.Where(c => c.AccountNo == accNo).FirstOrDefault();
+            var account = _accountRepository.GetCustomerAccountDetails(accNo);
 
             decimal currentBalance = account.Balance;
 
@@ -28,7 +35,7 @@ namespace JNationalBankApplication.Services
             try
             {
                 account.Balance = newBalance;
-                _context.SaveChanges();
+                _databaseService.SaveDatabaseChanges();
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"{amount.ToString("C")} successfully deposited");
@@ -54,7 +61,7 @@ namespace JNationalBankApplication.Services
             Console.WriteLine("ENTER WITHDRAWN AMOUNT: ");
             decimal withdrawAmount = Convert.ToDecimal(Console.ReadLine());
 
-            var account = _context.Accounts.Where(c => c.AccountNo == accNo).FirstOrDefault();
+            var account = _accountRepository.GetCustomerAccountDetails(accNo);
 
             decimal currentBalance = account.Balance;
 
@@ -63,7 +70,7 @@ namespace JNationalBankApplication.Services
             try
             {
                 account.Balance = newBalance;
-                _context.SaveChanges();
+                _databaseService.SaveDatabaseChanges();
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"{withdrawAmount.ToString("C")} successfully withdrawn");
@@ -96,8 +103,8 @@ namespace JNationalBankApplication.Services
             decimal paymentAmount = Convert.ToDecimal(Console.ReadLine());
             Console.WriteLine();
 
-            var customerAcc = _context.Accounts.Where(c => c.AccountNo == accNo).FirstOrDefault();
-            var payeeAcc = _context.Accounts.Where(c => c.AccountNo == paymentAccNo).FirstOrDefault();
+            var customerAcc = _accountRepository.GetCustomerAccountDetails(accNo);
+            var payeeAcc = _accountRepository.GetCustomerAccountDetails(paymentAccNo);
 
             decimal customerBalance = customerAcc.Balance;
             decimal payeeBalance = payeeAcc.Balance;
@@ -109,7 +116,8 @@ namespace JNationalBankApplication.Services
             {
                 customerAcc.Balance = updatedCustomerBalance;
                 payeeAcc.Balance = updatedPayeeBalance;
-                _context.SaveChanges();
+                _databaseService.SaveDatabaseChanges();
+
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine();
                 Console.WriteLine($"{paymentAmount.ToString("C")} successfully sent to acc no: {paymentAccNo}");
