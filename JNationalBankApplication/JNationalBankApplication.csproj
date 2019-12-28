@@ -76,11 +76,16 @@
     <Compile Include="Customer.cs">
       <DependentUpon>BankModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\DatabaseService.cs" />
+    <Compile Include="Interfaces\IAccountRepository.cs" />
+    <Compile Include="Interfaces\ICustomerRepository.cs" />
+    <Compile Include="Interfaces\IDatabaseService.cs" />
     <Compile Include="Interfaces\IAccountService.cs" />
     <Compile Include="Interfaces\ILoanService.cs" />
     <Compile Include="Loan.cs">
       <DependentUpon>BankModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\AccountRepository.cs" />
     <Compile Include="Repositories\CustomerRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\CustomerService.cs" />
@@ -118,7 +123,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Validations\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

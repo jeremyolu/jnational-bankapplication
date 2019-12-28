@@ -1,12 +1,27 @@
-﻿using System;
+﻿using JNationalBankApplication.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JNationalBankApplication
 {
-    class CustomerRepository
+    public class CustomerRepository : ICustomerRepository
     {
+        private readonly IDatabaseService _databaseService;
+
+        public CustomerRepository(IDatabaseService databaseService)
+        {
+            _databaseService = databaseService;
+        }
+
+        public Customer ViewCustomerDetails(int accNo)
+        {
+            return _databaseService.Customers.Where(c => c.AccountNo == accNo).FirstOrDefault();
+        }
+
+        public List<Customer> ViewAllCustomers()
+        {
+            return _databaseService.Customers.ToList();
+        }
+
     }
 }
