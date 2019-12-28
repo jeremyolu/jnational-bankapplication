@@ -7,7 +7,18 @@ namespace JNationalBankApplication.Services
 {
     public class CustomerService : ICustomerService
     {
+        private readonly IDatabaseService _databaseService;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IAccountRepository _accountRepository;
+
         private const string sortCode = "30-14-68";
+
+        public CustomerService(IDatabaseService databaseService, ICustomerRepository customerRepository, IAccountRepository accountRepository)
+        {
+            _databaseService = databaseService;
+            _customerRepository = customerRepository;
+            _accountRepository = accountRepository;
+        }
 
         public void RegisterCustomerAccount()
         {
@@ -32,43 +43,40 @@ namespace JNationalBankApplication.Services
             Console.WriteLine("ENTER POSTCODE");
             string postcode = Console.ReadLine();
 
-            using (JNationalBankDbContext _context = new JNationalBankDbContext())
+            try
             {
-                try
+                customer.Name = name;
+                customer.Surname = surname;
+                customer.Age = age;
+                customer.PostCode = postcode;
+                customer.AccountNo = accNo;
+
+                account.AccountNo = accNo;
+                account.SortCode = sortCode;
+
+                _databaseService.Customers.Add(customer);
+                _databaseService.Accounts.Add(account);
+                _databaseService.SaveDatabaseChanges();
+
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"CUSTOMER ACCOUNT SUCCESFULLY REGISTERED - ACCOUNT NO: {accNo}");
+                Console.ResetColor();
+            }
+            catch (DbEntityValidationException e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("ERROR REGISTERING CUSTOMER ACCOUNT");
+                foreach (var eve in e.EntityValidationErrors)
                 {
-                    customer.Name = name;
-                    customer.Surname = surname;
-                    customer.Age = age;
-                    customer.PostCode = postcode;
-                    customer.AccountNo = accNo;
-
-                    account.AccountNo = accNo;
-                    account.SortCode = sortCode;
-
-                    _context.Customers.Add(customer);
-                    _context.Accounts.Add(account);
-                    _context.SaveChanges();
-
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine($"CUSTOMER ACCOUNT SUCCESFULLY REGISTERED - ACCOUNT NO: {accNo}");
-                    Console.ResetColor();
-                }
-                catch (DbEntityValidationException e)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ERROR REGISTERING CUSTOMER ACCOUNT");
-                    foreach (var eve in e.EntityValidationErrors)
+                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
                     {
-                        Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                        foreach (var ve in eve.ValidationErrors)
-                        {
-                            Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
-                        }
+                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
                     }
-                    Console.ResetColor();
-                    throw;
-                    
                 }
+                Console.ResetColor();
+                throw;
+                    
             }
         }
 
@@ -121,19 +129,16 @@ namespace JNationalBankApplication.Services
             Console.Clear();
             Console.WriteLine("JNATIONAL BANK CUSTOMERS");
 
-            using (JNationalBankDbContext _context = new JNationalBankDbContext())
-            {
-                var customers = _context.Customers.ToList();
+            var customers = _customerRepository.ViewAllCustomers();
 
-                foreach (var customer in customers)
-                {
-                    Console.WriteLine("---------------------------------");
-                    Console.WriteLine($"NAME: {customer.Name.ToUpper()}");
-                    Console.WriteLine($"SURNAME: {customer.Surname.ToUpper()}");
-                    Console.WriteLine($"AGE: {customer.Age}");
-                    Console.WriteLine($"POSTCODE: {customer.PostCode.ToUpper()}");
-                    Console.WriteLine($"ACCOUNT NO: {customer.AccountNo}");
-                }
+            foreach (var customer in customers)
+            {
+                Console.WriteLine("---------------------------------");
+                Console.WriteLine($"NAME: {customer.Name.ToUpper()}");
+                Console.WriteLine($"SURNAME: {customer.Surname.ToUpper()}");
+                Console.WriteLine($"AGE: {customer.Age}");
+                Console.WriteLine($"POSTCODE: {customer.PostCode.ToUpper()}");
+                Console.WriteLine($"ACCOUNT NO: {customer.AccountNo}");
             }
 
             Console.WriteLine();
@@ -145,32 +150,27 @@ namespace JNationalBankApplication.Services
             Console.Clear();
             Console.WriteLine("JNATIONAL BANK CURRENT ACCOUNTS");
 
-            using (JNationalBankDbContext _context = new JNationalBankDbContext())
+            var accounts = _accountRepository.GetAllCustomerAccounts();
+
+            foreach (var account in accounts)
             {
-                var accounts = _context.Accounts.ToList();
-
-                foreach (var account in accounts)
-                {
-                    Console.WriteLine("---------------------------------");
-                    Console.WriteLine($"ACCOUNT NO: {account.AccountNo}");
-                    Console.WriteLine($"SORT CODE: {account.SortCode}");
-                    Console.WriteLine($"AVAILABLE BALANCE: {account.Balance.ToString("C")}");
-                }
+                Console.WriteLine("---------------------------------");
+                Console.WriteLine($"ACCOUNT NO: {account.AccountNo}");
+                Console.WriteLine($"SORT CODE: {account.SortCode}");
+                Console.WriteLine($"AVAILABLE BALANCE: {account.Balance.ToString("C")}");
             }
-
+            
             Console.WriteLine();
             Console.WriteLine("PRESS ENTER TO CONTINUE");
         }
 
         private void ViewCustomerAccountDetails()
         {
-            JNationalBankDbContext _context = new JNationalBankDbContext();
-
             Console.Clear();
             Console.WriteLine("JNATIONAL CUSTOMER ACCOUNT DETAILS");
             Console.WriteLine();
             Console.WriteLine("ENTER CUSTOMER ACCOUNT: ");
-            int? accNo = Convert.ToInt32(Console.ReadLine());
+            int accNo = Convert.ToInt32(Console.ReadLine());
 
             if (accNo == null)
             {
@@ -178,11 +178,11 @@ namespace JNationalBankApplication.Services
                 Console.WriteLine("do you want to search customer with postcode instead?");
                 return;
             }
-            
+
             //implement join query to join customer and account table details in one query when accNo is found...
 
-            var customer = _context.Customers.Where(c => c.AccountNo == accNo).FirstOrDefault();
-            var account = _context.Accounts.Where(c => c.AccountNo == accNo).FirstOrDefault();
+            var customer = _customerRepository.ViewCustomerDetails(accNo);
+            var account = _accountRepository.GetCustomerAccountDetails(accNo);
             var accountBalance = account.Balance;
 
             Console.WriteLine("---------------------------------");
