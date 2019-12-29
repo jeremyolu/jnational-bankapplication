@@ -201,24 +201,22 @@ namespace JNationalBankApplication.Services
             _consoleHelpher.DisplayText($"BALANCE : {account.Balance}");
             _consoleHelpher.DisplayText("---------------------------------");
 
-            DisplayBalanceStatus(accountBalance);
+            _consoleHelpher.DisplayText(DisplayBalanceStatus(accountBalance));
+
+            _consoleHelpher.ResetColour();
         }
 
         //implement unit test for method
-        public void DisplayBalanceStatus(decimal balance)
+        public string DisplayBalanceStatus(decimal balance)
         {
             if(balance < 0)
             {
                 _consoleHelpher.SetTextColour("RED");
-                _consoleHelpher.DisplayText("WARNING: customer current account balance is negative");
-                _consoleHelpher.ResetColour();
+                return "WARNING: customer current account balance is negative";
             }
-            else
-            {
-                _consoleHelpher.SetTextColour("GREEN");
-                _consoleHelpher.DisplayText("INFO: customer current account balance is normal");
-                _consoleHelpher.ResetColour();
-            }
+            
+            _consoleHelpher.SetTextColour("GREEN");
+            return "INFO: customer current account balance is normal" ;
         }
     }
 }
