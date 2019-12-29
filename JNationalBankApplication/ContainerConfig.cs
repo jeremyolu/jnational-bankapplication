@@ -3,6 +3,7 @@ using JNationalBankApplication.Data;
 using JNationalBankApplication.Interfaces;
 using JNationalBankApplication.Repositories;
 using JNationalBankApplication.Services;
+using JNationalBankApplication.Utilities;
 
 namespace JNationalBankApplication
 {
@@ -16,6 +17,7 @@ namespace JNationalBankApplication
             builder.RegisterType<MenuService>().As<IMenuService>();
 
             builder.RegisterType<DatabaseService>().As<IDatabaseService>();
+            builder.RegisterType<ConsoleHelper>().As<IConsoleHelpher>();
             builder.RegisterType<CustomerService>().As<ICustomerService>();
             builder.RegisterType<AccountService>().As<IAccountService>();
             builder.RegisterType<LoanService>().As<ILoanService>();
