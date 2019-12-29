@@ -9,38 +9,45 @@ namespace JNationalBankApplication.Services
         private readonly IDatabaseService _databaseService;
         private readonly ICustomerRepository _customerRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IConsoleHelpher _consoleHelpher;
 
         private const string sortCode = "30-14-68";
 
-        public CustomerService(IDatabaseService databaseService, ICustomerRepository customerRepository, IAccountRepository accountRepository)
+        public CustomerService(IDatabaseService databaseService, ICustomerRepository customerRepository, 
+            IAccountRepository accountRepository, IConsoleHelpher consoleHelpher)
         {
             _databaseService = databaseService;
             _customerRepository = customerRepository;
             _accountRepository = accountRepository;
+            _consoleHelpher = consoleHelpher;
         }
 
         public void RegisterCustomerAccount()
         {
-            Console.Clear();
-            Console.WriteLine("REGISTER NEW CUSTOMER ACCOUNT -");
-            Console.WriteLine("-------------------------------");
+            _consoleHelpher.ClearScreen();
+            _consoleHelpher.DisplayText("REGISTER NEW CUSTOMER ACCOUNT:");
+            _consoleHelpher.DisplayText("-------------------------------");
 
             var customer = new Customer();
             var account = new Account();
 
             int accNo = GenerateNewAccountNo();
 
-            Console.WriteLine("ENTER NAME");
-            string name = Console.ReadLine();
+            _consoleHelpher.DisplayText("ENTER NAME");
+            string name = _consoleHelpher.GetUserInput();
+            _consoleHelpher.TextFormatLine();
 
-            Console.WriteLine("ENTER SURNAME");
-            string surname = Console.ReadLine();
+            _consoleHelpher.DisplayText("ENTER SURNAME");
+            string surname = _consoleHelpher.GetUserInput();
+            _consoleHelpher.TextFormatLine();
 
-            Console.WriteLine("ENTER AGE");
+            _consoleHelpher.DisplayText("ENTER AGE");
             int age = Convert.ToInt32(Console.ReadLine());
+            _consoleHelpher.TextFormatLine();
 
-            Console.WriteLine("ENTER POSTCODE");
-            string postcode = Console.ReadLine();
+            _consoleHelpher.DisplayText("ENTER POSTCODE");
+            string postcode = _consoleHelpher.GetUserInput();
+            _consoleHelpher.TextFormatLine();
 
             try
             {
@@ -57,14 +64,14 @@ namespace JNationalBankApplication.Services
                 _databaseService.Accounts.Add(account);
                 _databaseService.SaveDatabaseChanges();
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"CUSTOMER ACCOUNT SUCCESFULLY REGISTERED - ACCOUNT NO: {accNo}");
-                Console.ResetColor();
+                _consoleHelpher.SetTextColour("GREEN");
+                _consoleHelpher.DisplayText($"CUSTOMER ACCOUNT SUCCESFULLY REGISTERED - ACCOUNT NO: {accNo}");
+                _consoleHelpher.ResetColour();
             }
             catch (DbEntityValidationException e)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("ERROR REGISTERING CUSTOMER ACCOUNT");
+                _consoleHelpher.SetTextColour("GREEN");
+                _consoleHelpher.DisplayText("ERROR REGISTERING CUSTOMER ACCOUNT");
                 foreach (var eve in e.EntityValidationErrors)
                 {
                     Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
@@ -73,7 +80,7 @@ namespace JNationalBankApplication.Services
                         Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
                     }
                 }
-                Console.ResetColor();
+                _consoleHelpher.ResetColour();
                 throw;
                     
             }
@@ -81,28 +88,27 @@ namespace JNationalBankApplication.Services
 
         public void ViewCustomersAccounts()
         {
-            Console.Clear();
-            Console.WriteLine("CUSTOMER & ACCOUNTS");
-            Console.WriteLine("-------------------");
+            _consoleHelpher.ClearScreen();
+            _consoleHelpher.DisplayText("CUSTOMER & ACCOUNTS");
+            _consoleHelpher.DisplayText("-------------------");
 
             DisplayCustomerAccountsMenu();
         }
 
         private int GenerateNewAccountNo()
         {
-            int newAccountNo;
             var generatedAccNo = new Random();
 
-            return newAccountNo = generatedAccNo.Next(1000, 9999);
+            return generatedAccNo.Next(1000, 9999);
         }
 
         public void DisplayCustomerAccountsMenu()
         {
-            Console.WriteLine("press 1 to view all customers");
-            Console.WriteLine("press 2 to view all accounts");
-            Console.WriteLine("press 3 to view a customer account");
-            Console.WriteLine();
-            Console.WriteLine("MENU OPTION:");
+            _consoleHelpher.DisplayText("press 1 to view all customers");
+            _consoleHelpher.DisplayText("press 2 to view all accounts");
+            _consoleHelpher.DisplayText("press 3 to view a customer account");
+            _consoleHelpher.TextFormatLine();
+            _consoleHelpher.DisplayText("MENU OPTION:");
             int input = Convert.ToInt32(Console.ReadLine());
             
             switch(input)
@@ -117,64 +123,64 @@ namespace JNationalBankApplication.Services
                     ViewCustomerAccountDetails();
                     break;
                 default:
-                    Console.WriteLine("incorrect menu option - navigating to main menu");
-                    Console.Clear();
+                    _consoleHelpher.DisplayText("incorrect menu option - navigating to main menu");
+                    _consoleHelpher.TextFormatLine();
                     break;
             }
         }
 
         private void ViewAllCustomers()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL BANK CUSTOMERS");
+            _consoleHelpher.TextFormatLine();
+            _consoleHelpher.DisplayText("JNATIONAL BANK CUSTOMERS");
 
             var customers = _customerRepository.ViewAllCustomers();
 
             foreach (var customer in customers)
             {
-                Console.WriteLine("---------------------------------");
-                Console.WriteLine($"NAME: {customer.Name.ToUpper()}");
-                Console.WriteLine($"SURNAME: {customer.Surname.ToUpper()}");
-                Console.WriteLine($"AGE: {customer.Age}");
-                Console.WriteLine($"POSTCODE: {customer.PostCode.ToUpper()}");
-                Console.WriteLine($"ACCOUNT NO: {customer.AccountNo}");
+                _consoleHelpher.DisplayText("---------------------------------");
+                _consoleHelpher.DisplayText($"NAME: {customer.Name.ToUpper()}");
+                _consoleHelpher.DisplayText($"SURNAME: {customer.Surname.ToUpper()}");
+                _consoleHelpher.DisplayText($"AGE: {customer.Age}");
+                _consoleHelpher.DisplayText($"POSTCODE: {customer.PostCode.ToUpper()}");
+                _consoleHelpher.DisplayText($"ACCOUNT NO: {customer.AccountNo}");
             }
 
-            Console.WriteLine();
-            Console.WriteLine("PRESS ENTER TO CONTINUE");
+            _consoleHelpher.TextFormatLine();
+            _consoleHelpher.DisplayText("PRESS ENTER TO CONTINUE");
         }
 
         private void ViewAllAccounts()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL BANK CURRENT ACCOUNTS");
+            _consoleHelpher.ClearScreen();
+            _consoleHelpher.DisplayText("JNATIONAL BANK CURRENT ACCOUNTS");
 
             var accounts = _accountRepository.GetAllCustomerAccounts();
 
             foreach (var account in accounts)
             {
-                Console.WriteLine("---------------------------------");
-                Console.WriteLine($"ACCOUNT NO: {account.AccountNo}");
-                Console.WriteLine($"SORT CODE: {account.SortCode}");
-                Console.WriteLine($"AVAILABLE BALANCE: {account.Balance.ToString("C")}");
+                _consoleHelpher.DisplayText("---------------------------------");
+                _consoleHelpher.DisplayText($"ACCOUNT NO: {account.AccountNo}");
+                _consoleHelpher.DisplayText($"SORT CODE: {account.SortCode}");
+                _consoleHelpher.DisplayText($"AVAILABLE BALANCE: {account.Balance.ToString("C")}");
             }
-            
-            Console.WriteLine();
-            Console.WriteLine("PRESS ENTER TO CONTINUE");
+
+            _consoleHelpher.TextFormatLine();
+            _consoleHelpher.DisplayText("PRESS ENTER TO CONTINUE");
         }
 
         private void ViewCustomerAccountDetails()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL CUSTOMER ACCOUNT DETAILS");
-            Console.WriteLine();
-            Console.WriteLine("ENTER CUSTOMER ACCOUNT: ");
+            _consoleHelpher.ClearScreen();
+            _consoleHelpher.DisplayText("JNATIONAL CUSTOMER ACCOUNT DETAILS");
+            _consoleHelpher.TextFormatLine();
+            _consoleHelpher.DisplayText("ENTER CUSTOMER ACCOUNT: ");
             int accNo = Convert.ToInt32(Console.ReadLine());
 
             if (accNo == null)
             {
-                Console.WriteLine("no account number has been inserted");
-                Console.WriteLine("do you want to search customer with postcode instead?");
+                _consoleHelpher.DisplayText("no account number has been inserted");
+                _consoleHelpher.DisplayText("do you want to search customer with postcode instead?");
                 return;
             }
 
@@ -184,16 +190,16 @@ namespace JNationalBankApplication.Services
             var account = _accountRepository.GetCustomerAccountDetails(accNo);
             var accountBalance = account.Balance;
 
-            Console.WriteLine("---------------------------------");
-            Console.WriteLine($"CUSTOMER ID: {customer.CustomerID}");
-            Console.WriteLine($"NAME: {customer.Name.ToUpper()}");
-            Console.WriteLine($"SURNAME: {customer.Surname.ToUpper()}");
-            Console.WriteLine($"AGE: {customer.Age}");
-            Console.WriteLine($"POSTCODE: {customer.PostCode.ToUpper()}");
-            Console.WriteLine($"ACCOUNT NO: {customer.AccountNo}");
-            Console.WriteLine($"SORTCODE: {account.SortCode}");
-            Console.WriteLine($"BALANCE : {account.Balance}");
-            Console.WriteLine("---------------------------------");
+            _consoleHelpher.DisplayText("---------------------------------");
+            _consoleHelpher.DisplayText($"CUSTOMER ID: {customer.CustomerID}");
+            _consoleHelpher.DisplayText($"NAME: {customer.Name.ToUpper()}");
+            _consoleHelpher.DisplayText($"SURNAME: {customer.Surname.ToUpper()}");
+            _consoleHelpher.DisplayText($"AGE: {customer.Age}");
+            _consoleHelpher.DisplayText($"POSTCODE: {customer.PostCode.ToUpper()}");
+            _consoleHelpher.DisplayText($"ACCOUNT NO: {customer.AccountNo}");
+            _consoleHelpher.DisplayText($"SORTCODE: {account.SortCode}");
+            _consoleHelpher.DisplayText($"BALANCE : {account.Balance}");
+            _consoleHelpher.DisplayText("---------------------------------");
 
             DisplayBalanceStatus(accountBalance);
         }
@@ -203,15 +209,15 @@ namespace JNationalBankApplication.Services
         {
             if(balance < 0)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("WARNING: customer current account balance is negative");
-                Console.ResetColor();
+                _consoleHelpher.SetTextColour("RED");
+                _consoleHelpher.DisplayText("WARNING: customer current account balance is negative");
+                _consoleHelpher.ResetColour();
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("INFO: customer current account balance is normal");
-                Console.ResetColor();
+                _consoleHelpher.SetTextColour("GREEN");
+                _consoleHelpher.DisplayText("INFO: customer current account balance is normal");
+                _consoleHelpher.ResetColour();
             }
         }
     }
