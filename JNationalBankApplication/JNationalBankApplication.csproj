@@ -58,6 +58,7 @@
     <Compile Include="Account.cs">
       <DependentUpon>BankModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Application.cs" />
     <Compile Include="BankModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -73,11 +74,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BankModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="ContainerConfig.cs" />
     <Compile Include="Customer.cs">
       <DependentUpon>BankModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\DatabaseService.cs" />
     <Compile Include="Interfaces\IAccountRepository.cs" />
+    <Compile Include="Interfaces\IApplication.cs" />
     <Compile Include="Interfaces\ICustomerRepository.cs" />
     <Compile Include="Interfaces\IDatabaseService.cs" />
     <Compile Include="Interfaces\IAccountService.cs" />

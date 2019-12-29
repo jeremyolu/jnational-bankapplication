@@ -1,7 +1,5 @@
-﻿using JNationalBankApplication.Data;
+﻿using Autofac;
 using JNationalBankApplication.Interfaces;
-using JNationalBankApplication.Repositories;
-using JNationalBankApplication.Services;
 
 namespace JNationalBankApplication
 {
@@ -9,16 +7,14 @@ namespace JNationalBankApplication
     {
         static void Main(string[] args)
         {
-            ApplicationStart(new MenuService(new CustomerService(new DatabaseService(), 
-                new CustomerRepository(new DatabaseService()), new AccountRepository(new DatabaseService())), 
-                new AccountService(new DatabaseService(), new AccountRepository(new DatabaseService())), 
-                new LoanService(new DatabaseService(), new CustomerRepository(new DatabaseService()), 
-                new AccountRepository(new DatabaseService()))));
-        }
+            var container = ContainerConfig.Configure();
 
-        static void ApplicationStart(IMenuService _menuService)
-        {
-            _menuService.DisplayApplicationMenu();
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var application = scope.Resolve<IApplication>();
+
+                application.ApplicationStart();
+            }
         }
     }
 }

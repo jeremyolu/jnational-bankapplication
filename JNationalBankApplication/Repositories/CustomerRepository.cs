@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace JNationalBankApplication
+namespace JNationalBankApplication.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {

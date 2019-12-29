@@ -1,7 +1,6 @@
 ﻿using JNationalBankApplication.Interfaces;
 using System;
 using System.Data.Entity.Validation;
-using System.Linq;
 
 namespace JNationalBankApplication.Services
 {
