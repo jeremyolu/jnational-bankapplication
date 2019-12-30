@@ -4,10 +4,8 @@ namespace JNationalBankApplication.Utilities
 {
     public class InputValidation : IInputValidation
     {
-        public bool ValidateUserInputForInt(string input)
+        public bool ValidateUserInputForInt(string input, int value)
         {
-            int value;
-
             if(int.TryParse(input, out value))
             {
                 return true;

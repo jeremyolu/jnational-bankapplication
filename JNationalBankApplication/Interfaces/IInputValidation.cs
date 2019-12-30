@@ -2,6 +2,6 @@
 {
     public interface IInputValidation
     {
-        bool ValidateUserInputForInt(string input);
+        bool ValidateUserInputForInt(string input, int value);
     }
 }
