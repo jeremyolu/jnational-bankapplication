@@ -86,7 +86,6 @@
     <Compile Include="Interfaces\IDatabaseService.cs" />
     <Compile Include="Interfaces\IAccountService.cs" />
     <Compile Include="Interfaces\IDateHelper.cs" />
-    <Compile Include="Interfaces\IInputValidation.cs" />
     <Compile Include="Interfaces\ILoanService.cs" />
     <Compile Include="Loan.cs">
       <DependentUpon>BankModel.tt</DependentUpon>
@@ -103,7 +102,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ConsoleHelper.cs" />
     <Compile Include="Utilities\DateHelper.cs" />
-    <Compile Include="Utilities\InputValidation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
