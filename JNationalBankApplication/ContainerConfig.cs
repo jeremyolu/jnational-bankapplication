@@ -18,6 +18,7 @@ namespace JNationalBankApplication
 
             builder.RegisterType<DatabaseService>().As<IDatabaseService>();
             builder.RegisterType<ConsoleHelper>().As<IConsoleHelpher>();
+            builder.RegisterType<InputValidation>().As<IInputValidation>();
             builder.RegisterType<CustomerService>().As<ICustomerService>();
             builder.RegisterType<AccountService>().As<IAccountService>();
             builder.RegisterType<LoanService>().As<ILoanService>();
