@@ -10,6 +10,7 @@ namespace JNationalBankApplication.Services
         private readonly IDatabaseService _databaseService;
         private readonly ICustomerRepository _customerRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IConsoleHelpher _consoleHelper;
 
         private const decimal minimumCustomerAge = 18;
         private const decimal minimumAccountBalance = 500.00M;
@@ -20,22 +21,24 @@ namespace JNationalBankApplication.Services
 
         private const decimal LoanAdminRate = 75;
 
-        public LoanService(IDatabaseService databaseService, ICustomerRepository customerRepository, IAccountRepository accountRepository)
+        public LoanService(IDatabaseService databaseService, ICustomerRepository customerRepository, 
+            IConsoleHelpher consoleHelper, IAccountRepository accountRepository)
         {
             _databaseService = databaseService;
             _customerRepository = customerRepository;
             _accountRepository = accountRepository;
+            _consoleHelper = consoleHelper;
         }
 
         public void ApplyCustomerLoan()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL CUSTOMER LOAN APPLICATION");
-            Console.WriteLine();
+            _consoleHelper.ClearScreen();
+            _consoleHelper.DisplayText("JNATIONAL CUSTOMER LOAN APPLICATION");
+            _consoleHelper.TextFormatLine();
 
-            Console.WriteLine("ENTER CUSTOMER ACC NO: ");
+            _consoleHelper.DisplayText("ENTER CUSTOMER ACC NO: ");
             int accNo = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine();
+            _consoleHelper.TextFormatLine();
 
             var loan = new Loan();
 
@@ -50,7 +53,7 @@ namespace JNationalBankApplication.Services
             //implement unit test for this method
             if (CustomerLoanApplication(customerAge, customerAccountBalance))
             {
-                Console.WriteLine("ENTER CUSTOMER LOAN AMOUNT: ");
+                _consoleHelper.DisplayText("ENTER CUSTOMER LOAN AMOUNT: ");
                 decimal loanAmount = Convert.ToDecimal(Console.ReadLine());
 
                 try
@@ -66,15 +69,15 @@ namespace JNationalBankApplication.Services
                     _databaseService.Loans.Add(loan);
                     _databaseService.SaveDatabaseChanges();
 
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine();
-                    Console.WriteLine("CUSTOMER LOAN ACCEPTED AND LOAN ACCOUNT CREATED");
-                    Console.ResetColor();
+                    _consoleHelper.SetTextColour("GREEN")
+;                   _consoleHelper.TextFormatLine();
+                    _consoleHelper.DisplayText("CUSTOMER LOAN ACCEPTED AND LOAN ACCOUNT CREATED");
+                    _consoleHelper.ResetColour();
                 }
                 catch (DbEntityValidationException e)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ERROR REGISTERING CUSTOMER ACCOUNT");
+                    _consoleHelper.SetTextColour("RED");
+                    _consoleHelper.DisplayText("ERROR REGISTERING CUSTOMER ACCOUNT");
                     foreach (var eve in e.EntityValidationErrors)
                     {
                         Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
@@ -83,46 +86,47 @@ namespace JNationalBankApplication.Services
                             Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
                         }
                     }
-                    Console.ResetColor();
+                    _consoleHelper.ResetColour();
                     throw;
                 }
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("CUSTOMER DOES NOT QUALIFY FOR LOAN");
-                Console.WriteLine();
-                Console.WriteLine($"CUSTOMER IS NOT THE REQUIRED AGE: {minimumCustomerAge} OR CUSTOMER ACCOUNT BALANCE IS LESS THAN THE REQUIRED AMOUNT: {minimumAccountBalance}");
-                Console.WriteLine();
-                Console.WriteLine($"CUSTOMER ACC: {accNo} | CUSTOMER AGE: {customerAge} | CUSTOMER ACCOUNT BALANCE: {customerAccountBalance}");
-                Console.ResetColor();
+                _consoleHelper.SetTextColour("RED");
+                _consoleHelper.DisplayText("CUSTOMER DOES NOT QUALIFY FOR LOAN");
+                _consoleHelper.TextFormatLine();
+                _consoleHelper.DisplayText($"CUSTOMER IS NOT THE REQUIRED AGE: {minimumCustomerAge} OR CUSTOMER ACCOUNT BALANCE IS LESS THAN THE REQUIRED AMOUNT: {minimumAccountBalance}");
+                _consoleHelper.TextFormatLine();
+                _consoleHelper.DisplayText($"CUSTOMER ACC: {accNo} | CUSTOMER AGE: {customerAge} | CUSTOMER ACCOUNT BALANCE: {customerAccountBalance}");
+                _consoleHelper.ResetColour();
             }
         }
 
         public void ViewAllCustomerLoans()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL CUSTOMER LOANS");
+            _consoleHelper.ClearScreen();
+            _consoleHelper.DisplayText("JNATIONAL CUSTOMER LOANS");
 
             var loans = _databaseService.Loans.ToList();
 
             foreach (var loan in loans)
             {
-                Console.WriteLine("---------------------------------");
-                Console.WriteLine($"LOAN ID: {loan.LoanNo}");
-                Console.WriteLine($"LOAN ACC NO: {loan.AccNo}");
-                Console.WriteLine($"LOAN AMOUNT: {loan.LoanAmount}");
-                Console.WriteLine($"LOAN INTEREST: {loan.LoanInterest}");
-                Console.WriteLine($"INTEREST REPAYMENT: {loan.LoanInterestRepayment}");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"FULL PAYMENT AMOUNT: {loan.FullRepaymentAmount}");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"LOAN START DATE: {loan.LoanStartDate}");
-                Console.WriteLine($"LOAN REPAYMENT DATE: {loan.RepaymentDate}");
+                _consoleHelper.DisplayText("---------------------------------");
+                _consoleHelper.DisplayText($"LOAN ID: {loan.LoanNo}");
+                _consoleHelper.DisplayText($"LOAN ACC NO: {loan.AccNo}");
+                _consoleHelper.DisplayText($"LOAN AMOUNT: {loan.LoanAmount}");
+                _consoleHelper.DisplayText($"LOAN INTEREST: {loan.LoanInterest}");
+                _consoleHelper.DisplayText($"INTEREST REPAYMENT: {loan.LoanInterestRepayment}");
+                _consoleHelper.SetTextColour("RED");
+                _consoleHelper.DisplayText($"FULL PAYMENT AMOUNT: {loan.FullRepaymentAmount}");
+                _consoleHelper.SetTextColour("WHITE");
+                _consoleHelper.DisplayText($"LOAN START DATE: {loan.LoanStartDate}");
+                _consoleHelper.DisplayText($"LOAN REPAYMENT DATE: {loan.RepaymentDate}");
+                _consoleHelper.DisplayText("---------------------------------");
             }
 
-            Console.WriteLine();
-            Console.WriteLine("PRESS ENTER TO CONTINUE");
+            _consoleHelper.TextFormatLine();
+            _consoleHelper.DisplayText("PRESS ENTER TO CONTINUE");
         }
 
         //implement unit test for this method
