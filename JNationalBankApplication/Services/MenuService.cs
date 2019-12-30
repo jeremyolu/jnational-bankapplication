@@ -8,12 +8,15 @@ namespace JNationalBankApplication.Services
         private readonly ICustomerService _customerService;
         private readonly IAccountService _accountService;
         private readonly ILoanService _loanService;
+        private readonly IInputValidation _inputValidation;
 
-        public MenuService(ICustomerService customerService, IAccountService accountService, ILoanService loanService)
+        public MenuService(ICustomerService customerService, IAccountService accountService, 
+            ILoanService loanService, IInputValidation inputValidation)
         {
             _customerService = customerService;
             _accountService = accountService;
             _loanService = loanService;
+            _inputValidation = inputValidation;
         }
 
         public void DisplayApplicationMenu()
@@ -39,7 +42,7 @@ namespace JNationalBankApplication.Services
                 Console.WriteLine("ENTER MENU SELECTION:");
                 var input = Console.ReadLine();
 
-                if(int.TryParse(input, out menuSelection))
+                if(_inputValidation.ValidateUserInputForInt(input, menuSelection))
                 {
                     switch (menuSelection)
                     {
