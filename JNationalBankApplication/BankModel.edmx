@@ -11,7 +11,7 @@
           </Key>
           <Property Name="AccountNo" Type="int" Nullable="false" />
           <Property Name="SortCode" Type="nchar" MaxLength="8" Nullable="false" />
-          <Property Name="Balance" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+          <Property Name="Balance" Type="decimal" Precision="10" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="Customers">
           <Key>
@@ -108,7 +108,7 @@
             <PropertyRef Name="AccountNo" />
           </Key>
           <Property Name="AccountNo" Type="Int32" Nullable="false" />
-          <Property Name="Balance" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+          <Property Name="Balance" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
           <Property Name="SortCode" Type="String" MaxLength="8" FixedLength="true" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Customers" Relationship="JNationalBankDBModel.FK_Customers_Accounts" FromRole="Account" ToRole="Customer" />
           <NavigationProperty Name="Loans" Relationship="JNationalBankDBModel.FK_Loans_Accounts" FromRole="Account" ToRole="Loan" />
