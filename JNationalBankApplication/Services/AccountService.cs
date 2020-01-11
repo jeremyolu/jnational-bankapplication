@@ -8,22 +8,24 @@ namespace JNationalBankApplication.Services
     {
         private readonly IDatabaseService _databaseService;
         private readonly IAccountRepository _accountRepository;
+        private readonly IConsoleHelpher _consoleHelpher;
 
-        public AccountService(IDatabaseService databaseService, IAccountRepository accountRepository)
+        public AccountService(IDatabaseService databaseService, IAccountRepository accountRepository, IConsoleHelpher consoleHelper)
         {
             _databaseService = databaseService;
             _accountRepository = accountRepository;
+            _consoleHelpher = consoleHelper;
         }
 
         public void DepositBalance()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL CUSTOMER DEPOSIT");
+            _consoleHelpher.ClearScreen();
+            _consoleHelpher.DisplayText("JNATIONAL CUSTOMER DEPOSIT");
 
-            Console.WriteLine("ENTER CUSTOMER ACC NO: ");
+            _consoleHelpher.DisplayText("ENTER CUSTOMER ACC NO: ");
             int accNo = Convert.ToInt32(Console.ReadLine());
 
-            Console.WriteLine("ENTER DEPOSIT AMOUNT: ");
+            _consoleHelpher.DisplayText("ENTER DEPOSIT AMOUNT: ");
             decimal amount = Convert.ToDecimal(Console.ReadLine());
 
             var account = _accountRepository.GetCustomerAccountDetails(accNo);
@@ -36,29 +38,29 @@ namespace JNationalBankApplication.Services
             {
                 account.Balance = newBalance;
                 _databaseService.SaveDatabaseChanges();
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"{amount.ToString("C")} successfully deposited");
-                Console.WriteLine();
-                Console.WriteLine($"AVAILABLE BALANCE: {newBalance.ToString("C")}");
-                Console.ResetColor();
+                _consoleHelpher.TextFormatLine();
+                _consoleHelpher.SetTextColour("GREEN");
+                _consoleHelpher.DisplayText($"{amount.ToString("C")} successfully deposited");
+                _consoleHelpher.TextFormatLine();
+                _consoleHelpher.DisplayText($"AVAILABLE BALANCE: {newBalance.ToString("C")}");
+                _consoleHelpher.TextFormatLine();
             }
             catch(Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.ResetColor();
+                _consoleHelpher.SetTextColour("RED");
+                _consoleHelpher.ResetColour();
             }
         }
 
         public void WithdrawBalance()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL WITHDRAW BALANCE");
+            _consoleHelpher.ClearScreen();
+            _consoleHelpher.DisplayText("JNATIONAL WITHDRAW BALANCE");
 
-            Console.WriteLine("ENTER CUSTOMER ACC NO: ");
+            _consoleHelpher.DisplayText("ENTER CUSTOMER ACC NO: ");
             int accNo = Convert.ToInt32(Console.ReadLine());
 
-            Console.WriteLine("ENTER WITHDRAWN AMOUNT: ");
+            _consoleHelpher.DisplayText("ENTER WITHDRAWN AMOUNT: ");
             decimal withdrawAmount = Convert.ToDecimal(Console.ReadLine());
 
             var account = _accountRepository.GetCustomerAccountDetails(accNo);
@@ -71,37 +73,37 @@ namespace JNationalBankApplication.Services
             {
                 account.Balance = newBalance;
                 _databaseService.SaveDatabaseChanges();
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"{withdrawAmount.ToString("C")} successfully withdrawn");
-                Console.WriteLine();
-                Console.WriteLine($"AVAILABLE BALANCE: {newBalance.ToString("C")}");
-                Console.ResetColor();
+                _consoleHelpher.ClearScreen();
+                _consoleHelpher.SetTextColour("GREEN");
+                _consoleHelpher.DisplayText($"{withdrawAmount.ToString("C")} successfully withdrawn");
+                _consoleHelpher.TextFormatLine();
+                _consoleHelpher.DisplayText($"AVAILABLE BALANCE: {newBalance.ToString("C")}");
+                _consoleHelpher.ResetColour();
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.ResetColor();
+                _consoleHelpher.SetTextColour("GREEN");
+                _consoleHelpher.ResetColour();
             }
         }
 
         public void SendCustomerPayment()
         {
-            Console.Clear();
-            Console.WriteLine("JNATIONAL CUSTOMER PAYMEMT");
-            Console.WriteLine();
+            _consoleHelpher.ClearScreen();
+            _consoleHelpher.DisplayText("JNATIONAL CUSTOMER PAYMEMT");
+            _consoleHelpher.ClearScreen();
 
-            Console.WriteLine("ENTER CUSTOMER ACC NO: ");
+            _consoleHelpher.DisplayText("ENTER CUSTOMER ACC NO: ");
             int accNo = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine();
+            _consoleHelpher.ClearScreen();
 
-            Console.WriteLine("ENTER PAYEE ACC NO: ");
+            _consoleHelpher.DisplayText("ENTER PAYEE ACC NO: ");
             int paymentAccNo = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine();
+            _consoleHelpher.ClearScreen();
 
-            Console.WriteLine("ENTER PAYMENT AMOUNT: ");
+            _consoleHelpher.DisplayText("ENTER PAYMENT AMOUNT: ");
             decimal paymentAmount = Convert.ToDecimal(Console.ReadLine());
-            Console.WriteLine();
+            _consoleHelpher.ClearScreen();
 
             var customerAcc = _accountRepository.GetCustomerAccountDetails(accNo);
             var payeeAcc = _accountRepository.GetCustomerAccountDetails(paymentAccNo);
@@ -118,14 +120,14 @@ namespace JNationalBankApplication.Services
                 payeeAcc.Balance = updatedPayeeBalance;
                 _databaseService.SaveDatabaseChanges();
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine();
-                Console.WriteLine($"{paymentAmount.ToString("C")} successfully sent to acc no: {paymentAccNo}");
-                Console.WriteLine();
-                Console.WriteLine($"CUSTOMER BALANCE: {updatedCustomerBalance.ToString("C")}");
-                Console.WriteLine();
-                Console.WriteLine($"PAYEE BALANCE: {updatedPayeeBalance.ToString("C")}");
-                Console.ResetColor();
+                _consoleHelpher.ClearScreen();
+                _consoleHelpher.TextFormatLine();
+                _consoleHelpher.DisplayText($"{paymentAmount.ToString("C")} successfully sent to acc no: {paymentAccNo}");
+                _consoleHelpher.TextFormatLine();
+                _consoleHelpher.DisplayText($"CUSTOMER BALANCE: {updatedCustomerBalance.ToString("C")}");
+                _consoleHelpher.TextFormatLine();
+                _consoleHelpher.DisplayText($"PAYEE BALANCE: {updatedPayeeBalance.ToString("C")}");
+                _consoleHelpher.ResetColour();
             }
             catch(Exception ex)
             {
@@ -139,13 +141,13 @@ namespace JNationalBankApplication.Services
         {
             if (amount <= 0)
             {
-                Console.WriteLine("cannot deposit less than £0.00 in a transaction");
+                _consoleHelpher.DisplayText("cannot deposit less than £0.00 in a transaction");
                 // throw exception
                 throw new ArgumentOutOfRangeException("amount", "amount cannot be less than £0.00 in a transaction");
             }
             else if (amount >= 1000)
             {
-                Console.WriteLine("cannot deposit more than £1000.00 of cash in a transaction");
+                _consoleHelpher.DisplayText("cannot deposit more than £1000.00 of cash in a transaction");
                 // throw exception
                 throw new ArgumentOutOfRangeException("amount", "amount cannot be greater than £1000.00 in a transaction");
             }
@@ -158,13 +160,13 @@ namespace JNationalBankApplication.Services
         {
             if (withdrawAmount <= 0)
             {
-                Console.WriteLine("cannot withdraw less than £0.00");
+                _consoleHelpher.DisplayText("cannot withdraw less than £0.00");
                 // throw exception
                 throw new ArgumentOutOfRangeException("WithdrawAmount", "withdraw amount cannot be less than £0.00");
             }
             else if(withdrawAmount > balance)
             {
-                Console.WriteLine("cannot withdraw more than account balance");
+                _consoleHelpher.DisplayText("cannot withdraw more than account balance");
                 // throw exception
                 throw new ArgumentOutOfRangeException("WithdrawAmount", "cannot withdraw more than account balance");
             }
@@ -177,7 +179,7 @@ namespace JNationalBankApplication.Services
         {
             if (customerBalance < paymentAmount)
             {
-                Console.WriteLine("cannot send this amount because customer account balance has insufficient funds");
+                _consoleHelpher.DisplayText("cannot send this amount because customer account balance has insufficient funds");
                 throw new ArgumentOutOfRangeException();
             }
 

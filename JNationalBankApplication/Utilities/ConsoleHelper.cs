@@ -57,6 +57,9 @@ namespace JNationalBankApplication.Utilities
             Console.ResetColor();
         }
 
-
+        public void ReadLine()
+        {
+            Console.ReadLine();
+        }
     }
 }

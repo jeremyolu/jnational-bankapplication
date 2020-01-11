@@ -13,5 +13,7 @@
         void SetTextColour(string textColour);
 
         void ResetColour();
+
+        void ReadLine();
     }
 }
